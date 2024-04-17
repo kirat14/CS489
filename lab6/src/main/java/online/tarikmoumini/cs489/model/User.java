@@ -35,7 +35,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @OneToOne
-    @JoinColumn(name = "address_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 }
