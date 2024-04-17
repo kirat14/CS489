@@ -33,7 +33,7 @@ public class Surgery {
     @NotBlank(message = "Surgery phone number is required and cannot be null, empty string or blank spaces")
     private String phone_number;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
