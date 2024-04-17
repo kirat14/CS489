@@ -1,24 +1,37 @@
 package online.tarikmoumini.cs489;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import online.tarikmoumini.cs489.model.Address;
+import online.tarikmoumini.cs489.model.Appointment;
+import online.tarikmoumini.cs489.model.Dentist;
+import online.tarikmoumini.cs489.model.Manager;
+import online.tarikmoumini.cs489.model.Patient;
 import online.tarikmoumini.cs489.model.Surgery;
 import online.tarikmoumini.cs489.service.AddressService;
+import online.tarikmoumini.cs489.service.AppointmentService;
 import online.tarikmoumini.cs489.service.SurgeryService;
+import online.tarikmoumini.cs489.service.UserService;
 
 @SpringBootApplication
 public class CitylibrarycliappApplication implements CommandLineRunner {
 
     private final SurgeryService surgerie_service;
     private final AddressService addressService;
+    private final AppointmentService appointmentService;
+    private final UserService userService;
 
     public CitylibrarycliappApplication(SurgeryService surgerie_service,
-            AddressService addressService) {
+            AddressService addressService, AppointmentService appointmentService, UserService userService) {
         this.surgerie_service = surgerie_service;
         this.addressService = addressService;
+        this.appointmentService = appointmentService;
+        this.userService = userService;
     }
 
     public static void main(String[] args) {
@@ -27,20 +40,36 @@ public class CitylibrarycliappApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Hello Data Persistence using Spring Data JPA");
-        // Create new Surgery with existing Address
-        System.out.println("Creating new Surgery with existing Address");
 
         // Create the address
-        var created_address = addressService
-                .addNewAddress(new Address(null, "1000 N 4th Street", "Fairfield", "IA", "52556", null, null));
+        var dentist_address = addressService
+                .addNewAddress(new Address("1000 N 4th Street", "Fairfield", "IA", "52556"));
 
-        System.out.println(created_address);
+        var patient_address = addressService
+                .addNewAddress(new Address("500 Main Street", "Springfield", "IL", "62701"));
+        var manager_address = addressService
+                .addNewAddress(new Address("123 Oak Avenue", "San Francisco", "CA", "94102"));
 
-        var surgery_instance = new Surgery(null, "Orthopedic Surgery", "123-456-7890", created_address);
-        var created_surgery = surgerie_service.addNewSurgery(surgery_instance);
+        var surgery = surgerie_service
+                .addNewSurgery(new Surgery("Orthopedic Surgery", "123-456-7890", dentist_address));
         System.out.println("Surgery added");
-        System.out.println(created_surgery);
+        System.out.println(surgery);
+
+        // Add Dentist, Patient, and Manager using UserService
+        Dentist dentist = userService.addDentist(new Dentist("dentist_1", "dentist_pass", "John", "Dentist",
+                "john.dentist@gmail.com", dentist_address, "Specialization1"));
+        Patient patient = userService.addPatient(new Patient("patient_1", "patient_pass", "John", "Patient",
+                "john.patient@gmail.com", patient_address, LocalDate.of(1990, 5, 15)));
+        Manager manager = userService.addManager(
+                new Manager("manager_1", "manager_pass", "John", "Manager", "john.manager@gmail.com", manager_address));
+
+        // Create an Appointment
+        Appointment appointment = new Appointment(1, LocalDateTime.now(), false, surgery, patient, dentist, manager);
+
+        // Add Appointment using AppointmentService
+        Appointment createdAppointment = appointmentService.addNewAppointment(appointment);
+
+        System.out.println(createdAppointment);
 
         /*
          * System.out.println("Creating new Surgery with new Address");
@@ -77,11 +106,6 @@ public class CitylibrarycliappApplication implements CommandLineRunner {
          */
     }
 
-    private Surgery addNewSurgeryAndAddress(String name, String phone_number, Address address) {
-        var surgery_instance = new Surgery(null, name, phone_number, address);
-        return surgerie_service.addNewSurgery(surgery_instance);
-    }
-
     private Surgery getSurgeryById(Integer publisherId) {
         return surgerie_service.getSurgeryId(publisherId);
     }
@@ -91,14 +115,17 @@ public class CitylibrarycliappApplication implements CommandLineRunner {
                 .forEach(System.out::println);
     }
 
-    private Surgery updateSurgeryById(Integer surgeryId) {
-        var surgeryFound = getSurgeryById(surgeryId);
-        if (surgeryFound != null) {
-            var address = new Address(null, "12 14th Street", "New York", "NY", "10927", null, null);
-            surgeryFound.setAddress(address);
-            return surgerie_service.updateSurgery(surgeryFound);
-        } else {
-            return null;
-        }
-    }
+    /*
+     * private Surgery updateSurgeryById(Integer surgeryId) {
+     * var surgeryFound = getSurgeryById(surgeryId);
+     * if (surgeryFound != null) {
+     * var address = new Address(null, "12 14th Street", "New York", "NY", "10927",
+     * null, null);
+     * surgeryFound.setAddress(address);
+     * return surgerie_service.updateSurgery(surgeryFound);
+     * } else {
+     * return null;
+     * }
+     * }
+     */
 }

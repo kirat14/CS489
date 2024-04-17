@@ -10,6 +10,7 @@ public class Appointment {
 
     @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "appointment_date", nullable = false)
@@ -18,8 +19,9 @@ public class Appointment {
     @Column(name = "status", nullable = false)
     private boolean status;
 
-    @Column(name = "surgery_id", nullable = false)
-    private int surgeryId;
+    @ManyToOne
+    @JoinColumn(name = "surgery_id", referencedColumnName = "ID", nullable = false)
+    private Surgery surgery;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", referencedColumnName = "ID", nullable = false)
@@ -38,16 +40,14 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(int id, LocalDateTime appointmentDate, boolean status, int surgeryId, Patient patient, Dentist dentist, Manager manager) {
+    public Appointment(int id, LocalDateTime appointmentDate, boolean status, Surgery surgery, Patient patient, Dentist dentist, Manager manager) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.status = status;
-        this.surgeryId = surgeryId;
+        this.surgery = surgery;
         this.patient = patient;
         this.dentist = dentist;
         this.manager = manager;
     }
-
-    // Getters and Setters (omitted for brevity)
 }
 

@@ -5,8 +5,8 @@ import lombok.*;
 
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -18,24 +18,30 @@ public class User {
     private int id;
 
     @Column(name = "username", unique = true, nullable = false)
+    @NonNull
     private String username;
 
     @Column(name = "password", nullable = false)
+    @NonNull
     private String password;
 
     @Column(name = "user_type", insertable = false, updatable = false)
     private String userType;
 
     @Column(name = "firstname")
+    @NonNull
     private String firstname;
 
     @Column(name = "lastname")
+    @NonNull
     private String lastname;
 
     @Column(name = "email")
+    @NonNull
     private String email;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "FK_user_address"))
+    @NonNull
     private Address address;
 }
