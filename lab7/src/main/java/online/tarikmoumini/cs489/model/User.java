@@ -40,7 +40,7 @@ public class User {
     @NonNull
     private String email;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "FK_user_address"))
     @NonNull
     private Address address;
