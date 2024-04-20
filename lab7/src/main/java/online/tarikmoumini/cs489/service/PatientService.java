@@ -33,7 +33,8 @@ public class PatientService {
                                 p.getAddress().getStreet(),
                                 p.getAddress().getCity(),
                                 p.getAddress().getState(),
-                                p.getAddress().getZip_code()) : null))
+                                p.getAddress().getZip_code(),
+                                p.getFirstname()) : null))
                 .toList();
     }
 
@@ -48,7 +49,7 @@ public class PatientService {
         AddressDTO address = null;
         if (patient.getAddress() != null) {
             address = new AddressDTO(patient.getAddress().getStreet(), patient.getAddress().getCity(),
-                    patient.getAddress().getState(), patient.getAddress().getZip_code());
+                    patient.getAddress().getState(), patient.getAddress().getZip_code(), patient.getFirstname());
         }
         PatientDto patientDTO = new PatientDto(patient.getFirstname(), patient.getLastname(), patient.getEmail(),
                     address);
@@ -60,7 +61,7 @@ public class PatientService {
         return new PatientDto(
                 savedPatient.getFirstname(), savedPatient.getLastname(), savedPatient.getEmail(),
                 new AddressDTO(savedPatient.getAddress().getStreet(), savedPatient.getAddress().getCity(),
-                        savedPatient.getAddress().getState(), savedPatient.getAddress().getZip_code()));
+                        savedPatient.getAddress().getState(), savedPatient.getAddress().getZip_code(), savedPatient.getFirstname()));
     }
 
     public Patient updatePatient(Integer patient_id, Patient editedPatient) throws PatientNotFoundException {
