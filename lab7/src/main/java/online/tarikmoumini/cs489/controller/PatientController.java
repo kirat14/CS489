@@ -19,7 +19,7 @@ import online.tarikmoumini.cs489.service.PatientService;
 @RestController
 @RequestMapping(value = "adsweb/api/v1/patient")
 public class PatientController {
-    
+
     @Autowired
     private PatientService patient_service;
 
@@ -34,9 +34,26 @@ public class PatientController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<PatientDto> registerNewPublisher(@Valid @RequestBody Patient patientRequest) {
+    public ResponseEntity<PatientDto> registerNewPatient(@Valid @RequestBody Patient patientRequest) {
         return new ResponseEntity<>(patient_service.addNewPatient(patientRequest), HttpStatus.CREATED);
     }
-    
+
+    @PutMapping(value = "/update/{patientId}")
+    public ResponseEntity<Patient> updatePatient(@PathVariable Integer patientId, @RequestBody Patient editedPatient) throws PatientNotFoundException {
+        return new ResponseEntity<>(patient_service.updatePatient(patientId, editedPatient), HttpStatus.OK);
+    }
+
+
+    @DeleteMapping(value = "/delete/{patientId}")
+    public ResponseEntity<Void> deletePatient(@PathVariable Integer patientId) {
+        patient_service.deletePatientById(patientId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @GetMapping(value = "/search/{searchString}")
+    public ResponseEntity<List<PatientDto>> searchPatient(@PathVariable String searchString) {
+        return ResponseEntity.ok(patient_service.searchPatient(searchString));
+    }
 
 }
