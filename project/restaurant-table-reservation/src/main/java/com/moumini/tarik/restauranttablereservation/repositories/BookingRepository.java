@@ -21,6 +21,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
   // Find bookings by a specific customer
   List<Booking> findByCustomer(Customer customer);
 
+  // Find bookings by a specific customer ID (recommended)
+  List<Booking> findByCustomer_Id(Long customerId);
+
   // Check availability for a specific table on a date
   boolean existsByRestaurantTableAndBookedDateTime(
     RestaurantTable table, LocalDateTime arrivalDateTime);

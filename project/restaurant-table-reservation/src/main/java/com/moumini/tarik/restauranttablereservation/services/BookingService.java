@@ -3,6 +3,8 @@ package com.moumini.tarik.restauranttablereservation.services;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,32 @@ public class BookingService {
     // Needed to Cancel bookings after 5 minutes if not paid
     @Autowired
     private TaskExecutor taskExecutor;
+
+    // Get Booking History for a Customer
+    public ResponseEntity<List<BookingDto>> getCustomerBookingHistory() {
+        // Get the currently logged-in user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long customerId = userDetails.getId();
+
+        List<Booking> bookings = bookingRepository.findByCustomer_Id(customerId);
+        List<BookingDto> bookingDtos = new ArrayList<>();
+        for (Booking booking : bookings) {
+            bookingDtos.add(convertBookingToDto(booking));
+        }
+        return ResponseEntity.ok(bookingDtos);
+    }
+
+    private BookingDto convertBookingToDto(Booking booking) {
+        RestaurantTable table = booking.getRestaurantTable();
+        Customer customer = booking.getCustomer();
+        return new BookingDto(table.getId(),
+        booking.getBookedDateTime(),
+        booking.getArrivalDateTime(),
+        customer.getFirstName(),
+        customer.getLastName());
+    }
 
     // Create a booking
     public ResponseEntity<?> createBooking(Booking booking) {
@@ -117,7 +145,7 @@ public class BookingService {
 
     public ResponseEntity<?> cancelBooking(int id) {
         Booking existingBooking = getBookingById(id).getBody();
-        if(!existingBooking.canCancel()) {
+        if (!existingBooking.canCancel()) {
             return ResponseEntity.badRequest().body(new MessageResponse("You can not cancel this booking (24hours)"));
         }
         existingBooking.setStatus(BookingStatus.CANCELLED);
@@ -131,18 +159,18 @@ public class BookingService {
     private void scheduleBookingCancellation(Booking booking) {
         long cancellationDelay = 1 * 60 * 1000; // 5 minutes in milliseconds
         taskExecutor.execute(() -> {
-          try {
-            Thread.sleep(cancellationDelay);
-            Optional<Booking> unpaidBooking = bookingRepository.findById(booking.getId());
-            if (unpaidBooking.isPresent() && unpaidBooking.get().getStatus().equals(BookingStatus.NEW)) {
-              unpaidBooking.get().setStatus(BookingStatus.CANCELLED);
-              bookingRepository.save(unpaidBooking.get());
-              System.out.println("Booking cancelled after 5 minutes");
+            try {
+                Thread.sleep(cancellationDelay);
+                Optional<Booking> unpaidBooking = bookingRepository.findById(booking.getId());
+                if (unpaidBooking.isPresent() && unpaidBooking.get().getStatus().equals(BookingStatus.NEW)) {
+                    unpaidBooking.get().setStatus(BookingStatus.CANCELLED);
+                    bookingRepository.save(unpaidBooking.get());
+                    System.out.println("Booking cancelled after 5 minutes");
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
         });
-      }
-      
+    }
+
 }

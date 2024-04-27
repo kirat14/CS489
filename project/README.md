@@ -109,11 +109,18 @@ curl -X DELETE http://localhost:8080/booking/5 \
 -H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImlhdCI6MTcxNDIxNzA2MywiZXhwIjoxNzE0MzAzNDYzfQ.YGf6yFhag2PqK5T5nM_POHPJTBs6evQXn-N2vpJdSXuRrOLchtqporeHpF8J1zMNJxbwnQBR-esObC379ofpjQ"
 ```
 
-### 2. Cancel a booking
+### 3. Cancel a booking
 
 ```
 curl -X PUT http://localhost:8080/booking/cancel/2 \
 -H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImlhdCI6MTcxNDE5MTM2OCwiZXhwIjoxNzE0Mjc3NzY4fQ.cbeHBW2o9FzR8dUdoPbiDzlym4RDt-HC8q8tKFhHrjtUKo7xXAP5diFUn4D1Hrsnh1Y52am5eiptMYOcnNuUkw"
+```
+
+### 4. Get Customer booking history
+
+```
+curl -X GET http://localhost:8080/booking/customer \
+-H "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b21lciIsImlhdCI6MTcxNDIxODI1MCwiZXhwIjoxNzE0MzA0NjUwfQ.TnJGJwaJF4iwNcvVyuQFO_ZqTE7R9La_WDYfya3bDC-TnBc2ZGR-_NILbgpUE4yRanN8jMRkC_2imFwCDMlIJA"
 ```
 
 

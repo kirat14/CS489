@@ -35,6 +35,12 @@ public class BookingController {
       return bookingService.getBookingById(id);
   }
 
+  // Read a booking by ID (GET /booking/{id})
+  @GetMapping("/customer")
+  public ResponseEntity<?> getCustomerBookingHistory() {
+      return bookingService.getCustomerBookingHistory();
+  }
+
   // Update a booking (PUT /booking/{id})
   @PutMapping("/{id}")
   public ResponseEntity<?> updateBooking(@PathVariable Integer id, @Valid @RequestBody Booking bookingDetails) {
