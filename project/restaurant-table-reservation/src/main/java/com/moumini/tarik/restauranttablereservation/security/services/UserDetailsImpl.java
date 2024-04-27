@@ -10,12 +10,34 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.moumini.tarik.restauranttablereservation.models.User;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 public class UserDetailsImpl implements UserDetails {
   private static final long serialVersionUID = 1L;
 
   private Long id;
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    this.authorities = authorities;
+  }
 
   private String username;
 

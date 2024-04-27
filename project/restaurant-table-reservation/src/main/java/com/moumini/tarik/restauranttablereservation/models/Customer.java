@@ -1,5 +1,6 @@
 package com.moumini.tarik.restauranttablereservation.models;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -7,6 +8,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -32,6 +34,9 @@ public class Customer extends User {
   private String phoneNumber;
 
   private String address;
+
+  @OneToMany(mappedBy = "customer")
+  private List<Booking> bookings;
 
   public Customer() {
   }
