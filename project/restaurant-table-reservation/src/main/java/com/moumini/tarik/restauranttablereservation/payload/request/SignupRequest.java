@@ -4,6 +4,9 @@ import java.util.Set;
 
 import javax.validation.constraints.*;
 
+import lombok.Data;
+
+@Data
 public class SignupRequest {
   @NotBlank
   @Size(min = 3, max = 20)
@@ -20,35 +23,14 @@ public class SignupRequest {
   @Size(min = 6, max = 40)
   private String password;
 
-  public String getUsername() {
-    return username;
-  }
+  private String firstName;
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+  @NotBlank
+  private String lastName;
 
-  public String getEmail() {
-    return email;
-  }
+  @NotBlank
+  private String address;
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public Set<String> getRole() {
-    return this.role;
-  }
-
-  public void setRole(Set<String> role) {
-    this.role = role;
-  }
+  @NotBlank
+  private String phoneNumber;
 }

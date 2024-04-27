@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.moumini.tarik.restauranttablereservation.models.Customer;
 import com.moumini.tarik.restauranttablereservation.models.ERole;
+import com.moumini.tarik.restauranttablereservation.models.Manager;
 import com.moumini.tarik.restauranttablereservation.models.Role;
 import com.moumini.tarik.restauranttablereservation.models.User;
 import com.moumini.tarik.restauranttablereservation.payload.request.LoginRequest;
@@ -59,17 +61,17 @@ public class AuthController {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String jwt = jwtUtils.generateJwtToken(authentication);
-    
-    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
+
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
     List<String> roles = userDetails.getAuthorities().stream()
         .map(item -> item.getAuthority())
         .collect(Collectors.toList());
 
-    return ResponseEntity.ok(new JwtResponse(jwt, 
-                         userDetails.getId(), 
-                         userDetails.getUsername(), 
-                         userDetails.getEmail(), 
-                         roles));
+    return ResponseEntity.ok(new JwtResponse(jwt,
+        userDetails.getId(),
+        userDetails.getUsername(),
+        userDetails.getEmail(),
+        roles));
   }
 
   @PostMapping("/signup")
@@ -86,11 +88,6 @@ public class AuthController {
           .body(new MessageResponse("Error: Email is already in use!"));
     }
 
-    // Create new user's account
-    User user = new User(signUpRequest.getUsername(), 
-               signUpRequest.getEmail(),
-               encoder.encode(signUpRequest.getPassword()));
-
     Set<String> strRoles = signUpRequest.getRole();
     Set<Role> roles = new HashSet<>();
 
@@ -101,19 +98,33 @@ public class AuthController {
     } else {
       strRoles.forEach(role -> {
         switch (role) {
-        case "admin":
-          Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(adminRole);
-
-          break;
+          case "admin":
+            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(adminRole);
+            break;
         }
       });
     }
 
-    user.setRoles(roles);
+    // Create new user's account using a dedicated method
+    User user = createUser(signUpRequest, roles);
     userRepository.save(user);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+  }
+
+  private User createUser(SignupRequest signUpRequest, Set<Role> roles) {
+    String encodedPassword = encoder.encode(signUpRequest.getPassword());
+    if (signUpRequest.getRole() == null) {
+      // Create customer user
+      return new Customer(0L, signUpRequest.getUsername(), signUpRequest.getEmail(),
+          encodedPassword, roles, signUpRequest.getFirstName(), signUpRequest.getLastName(),
+          signUpRequest.getPhoneNumber(), signUpRequest.getAddress());
+    } else {
+      // Create manager user (assuming role logic assigns manager role)
+      return new Manager(0L, signUpRequest.getUsername(), signUpRequest.getEmail(),
+          encodedPassword, roles);
+    }
   }
 }
