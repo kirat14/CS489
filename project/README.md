@@ -26,6 +26,10 @@ Restaurants often face challenges in efficiently managing table reservations, es
    - Customers should receive confirmation of their reservations via email or SMS.
 
 
+# ER Diagram
+![alt text](https://github.com/kirat14/CS489/blob/main/project/er-diagram.png?raw=true)
+
+
 
 
 # 1. Sign Up
